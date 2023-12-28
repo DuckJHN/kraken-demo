@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +32,7 @@ public class KrakenController {
     }
 
     @GetMapping("/DepositAddresses")
-    public ResponseEntity<String> getBalance() {
+    public ResponseEntity<String> getOrCreateDepositAddress() {
         String endPointName = "DepositAddresses";
 
         // Create new deposit set true or else set false
@@ -49,10 +48,13 @@ public class KrakenController {
     }
 
     @GetMapping("/WithdrawAddresses")
-    public ResponseEntity<String> getBalance(@RequestBody Map<String, Object> requestBody) {
+    public ResponseEntity<String> getOrCreateWithdrawAddress() {
         String endPointName = "WithdrawAddresses";
-
-        String inputParameters = convertDataToInputParameters(requestBody);
+        Map<String, Object> data = Map.of(
+                "asset","XBT",
+                "new", true
+        );
+        String inputParameters = convertDataToInputParameters(data);
 
         String responseJson = krakenClient.queryPrivateEndpoint(endPointName, inputParameters, apiPublicKey, apiPrivateKey);
         return ResponseEntity.ok(responseJson);
